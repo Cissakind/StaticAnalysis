@@ -1,0 +1,13 @@
+%
+% If N1 > N2, then N2 <= N1:
+%
+inv_grt : grt N1 N2 -> leq N2 N1 -> type.
+%mode inv_grt +D1 -D4.
+
+inv_grt_z : inv_grt grt_z leq_z.
+
+inv_grt_s : inv_grt (grt_s GRT) (leq_s LTH)
+    <- inv_grt GRT LTH.
+
+%worlds () (inv_grt _ _).
+%total D (inv_grt D _).

@@ -1,0 +1,108 @@
+% Nome: Cecília Kind
+% Nome: Marcos Vinicius
+
+
+%
+% After in_ord inserts an element into a sorted list, the list remains sorted.
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definition
+
+inv_sort_thm : sorted L -> in_ord L E L' -> sorted L' -> type.
+%mode inv_sort_thm +D1 +D2 -D3.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add element to empty list
+
+inv_sort_thm_nil : inv_sort_thm 
+								sorted_nil  
+				   				in_ord_nil           
+				   				sorted_one.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add to a list with one element in which E is less than this element
+
+inv_sort_thm_one_leq: inv_sort_thm 
+									sorted_one                         
+									(in_ord_leq Leq_E_Lhead)
+									(sorted_con sorted_one Leq_E_Lhead). 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Add to a list with more than one element in which E is less than the first element
+
+inv_sort_thm_con_leq: inv_sort_thm 
+									(sorted_con SORTED1 LEQ1)                 
+									(in_ord_leq Leq_E_Lhead)        
+									(sorted_con (sorted_con SORTED1 LEQ1) Leq_E_Lhead).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add to a list with one element in which E is greater than this element
+
+% inv_sort_thm : sorted L -> in_ord L E L' -> sorted L' -> type.
+% inv_sort_thm +D1 +D2 -D3.
+
+
+inv_sort_thm_gth1: inv_sort_thm
+								sorted_one
+								(in_ord_gth in_ord_nil X2_GRT_X1)
+								(sorted_con sorted_one X1_LEQ_X2)
+								<- inv_grt X2_GRT_X1 X1_LEQ_X2.
+									
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Add to a list with more than one element in which E is greater than the first element
+
+inv_sort_thm_gth2: inv_sort_thm
+										(sorted_con Sorted_X2 X1_LEQ_X2)
+										(in_ord_gth IN_ORD_X3_X2 X3_GTH_X1)
+										(sorted_con Sorted_X3_X2 X3_LEQ_X2)
+										<- inv_sort_thm Sorted_X2 IN_ORD_X3_X2 Sorted_X3_X2
+										<- inv_grt X3_GTH_X1 X3_LEQ_X2.
+
+% greater than first and second
+
+inv_sort_thm_gth3: inv_sort_thm
+										(sorted_con Sorted_X2 X1_LEQ_X2)
+										(in_ord_gth IN_ORD_X2_X3 X3_GTH_X1)
+										(sorted_con Sorted_X2_X3 X1_LEQ_X2)
+										<- inv_sort_thm Sorted_X2 IN_ORD_X2_X3 Sorted_X2_X3.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%worlds () (inv_sort_thm _ _ _).
+%total D (inv_sort_thm D _ _).
+
+
+%
+% 'sort' sorts a list.
+%
+
+sort_thm : sort L L' -> sorted L' -> type.
+%mode sort_thm +SORT -SORTED.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Empty list is already sorted
+sort_thm_nil : sort_thm sort_nil sorted_nil.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Insert an element in order on a sorted list construct a sorted list
+sort_thm_con : sort_thm
+								(sort_con InOrd L)
+								Sorted_L
+								<- sort_thm L Sorted_L2
+								<- inv_sort_thm Sorted_L2 InOrd Sorted_L.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%worlds () (sort_thm _ _).
+%total D (sort_thm D _).

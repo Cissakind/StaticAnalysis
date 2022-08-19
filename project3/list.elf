@@ -1,0 +1,60 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This elf file implements a list data type.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+list : type.
+
+nil : list.
+cons : nat -> list -> list.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% in_ord L E L' is true whenever L' is the new list that we obtain by
+% inserting E into L in such a way that, if L is sorted, then L' is also
+% sorted.
+% Example:
+% in_ord (cons (s z) nil) (s (s z)) L.
+%  L = cons (s z) (cons (s (s z)) nil). 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+in_ord : list -> nat -> list -> type.
+%mode in_ord +L +E -L'.
+in_ord_nil : in_ord nil E (cons E nil).
+in_ord_leq : in_ord (cons E' L) E (cons E (cons E' L))
+    <- leq E E'.
+
+% se maior que o primeiro elemento, vou colocar no restante da lista de forma 
+% que a lista continue ordenada de forma recursiva.  Ou seja, cons E' ainda é o 
+% primeiro elemento, mas agora estou adicionando a lista L', que é a lista L 
+% mais o novo elemento E após ordenada.
+
+in_ord_gth : in_ord (cons E' L) E (cons E' L')
+    <- grt E E'
+    <- in_ord L E L'.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% sorted L is true if L is a sorted list; that is, for any element E at
+% position N in L, we have that E is less than or equal any other element
+% E' at position N' in L, such that N' > N.
+% Example:
+% solve D : sorted (cons (s z) (cons (s z) (cons (s (s z))
+%     (cons (s (s (s z))) nil)))).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorted : list -> type.
+%mode sorted +L.
+sorted_nil : sorted nil.
+sorted_one : sorted (cons E nil).
+sorted_con : sorted (cons N1 (cons N2 L))
+    <- leq N1 N2
+    <- sorted (cons N2 L).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% sort L L' is true if L' is a list that contains all the elements in L,
+% sorted in ascending order.
+% Example:
+% solve D : sort (cons (s z) (cons (s (s z)) (cons z nil))) L.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sort : list -> list -> type.
+%mode sort +LIN -LOUT.
+sort_nil : sort nil nil.
+sort_con : sort (cons E L) L'
+    <- sort L L''
+    <- in_ord L'' E L'.

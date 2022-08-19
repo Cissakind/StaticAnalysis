@@ -1,0 +1,29 @@
+#!/usr/bin/env zsh
+# =========================================================================== #
+
+#edit here
+llvmBuildDir="$HOME/repos/llvm-project/build"
+
+
+buildDir=$(realpath -L ./build)
+
+cc=$llvmBuildDir/bin/clang
+cxx=$llvmBuildDir/bin/clang++
+cxxflags=(
+    "-O0"
+    "-g"
+)
+
+cmake -S . -B $buildDir -G "Ninja"     \
+    -DCMAKE_C_COMPILER=$cc                      \
+    -DCMAKE_CXX_COMPILER=$cxx                   \
+    -DCMAKE_CXX_FLAGS="$cxxflags"               \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+
+# --------------------------------------------------------------------------- #
+
+ninja -C $buildDir -j$(nproc)
+
+
+# =========================================================================== #

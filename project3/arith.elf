@@ -1,0 +1,36 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This elf file implements the natural number data type.
+% Because we only need comparison, I have only implemented the > and <=
+% operators.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+nat   : type.
+z     : nat.
+s     : nat -> nat.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% grt N1 N2 is true if N1 is greater than N2.
+% Example:
+% solve D : grt (s (s z)) (s z).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+grt   : nat -> nat -> type.
+%mode grt +N1 +N2.
+grt_z : grt (s N) z.
+grt_s : grt (s N) (s M)
+  <- grt N M.
+%worlds () (grt N1 N2).
+%terminates {N1 N2} (grt N1 N2).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% leq N1 N2 is true if N1 is less than or equal N2.
+% Example:
+% solve D : leq (s z) (s (s z)).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+leq   : nat -> nat -> type.
+%mode leq +N1 +N2.
+leq_z : leq z N.
+leq_s : leq (s N) (s M)
+  <- leq N M.
+%worlds () (leq N1 N2).
+%terminates {N1 N2} (leq N1 N2).
